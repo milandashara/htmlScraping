@@ -19,7 +19,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 public class HTMLUnit {
 
-	public static void storeData(String strUrl,String transactionIdToSearch,int roundNum) throws Exception {
+	public static TableData storeData(String strUrl,String transactionIdToSearch,int roundNum) throws Exception {
 		
 		  final WebClient webClient = new WebClient(BrowserVersion.getDefault());		 
 		 final HtmlPage page = webClient.getPage(strUrl);
@@ -30,7 +30,7 @@ public class HTMLUnit {
 		 
 		 HashMap<String, TableData> tableMap=new HashMap<String, TableData>();
 		 for (final HtmlTableRow row : table.getRows()) {
-		     System.out.println("Found row");
+		     System.out.println("Scrapping Table Rows");
 		     String transactionId=row.getCells().get(1).asText();
 		     String result=row.getCells().get(5).asText();
 		     String betAmount=row.getCells().get(6).asText().split("\\s+")[0];
@@ -57,7 +57,7 @@ public class HTMLUnit {
 			 insertTableData(tableData, c);
 			 c.close();
 		 }
-
+		 return  tableMap.get(transactionIdToSearch);
 	}
 
 	public static Connection getConnection() {
@@ -65,7 +65,7 @@ public class HTMLUnit {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager
-					.getConnection("jdbc:sqlite:D:\\source\\online exam\\workspace\\htmlScraping\\src\\main\\java\\testDB.db");
+					.getConnection("jdbc:sqlite:C:\\Users\\milan\\git\\htmlScraping\\htmlScraping\\src\\main\\java\\testDB.db");
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
