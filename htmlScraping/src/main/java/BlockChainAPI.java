@@ -50,6 +50,9 @@ public class BlockChainAPI {
 			e.printStackTrace();
 		}	
 		System.out.println("Transaction Id : "+ transactionId);
+		transactionId=transactionId.substring(0, 16);//1s 16 character
+		System.out.println("16 digit Transaction Id : "+transactionId);
+		
 		return transactionId;
 	}
 	
