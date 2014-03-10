@@ -23,7 +23,7 @@ public class HTMLUnit {
 		
 		  final WebClient webClient = new WebClient(BrowserVersion.getDefault());		 
 		 final HtmlPage page = webClient.getPage(strUrl);
-		 Thread.sleep(5000);//wait to load full page
+		 Thread.sleep(2000);//wait to load full page. 
 		 final HtmlTable table = page.getHtmlElementById("play-result");
 		 int rowCount=table.getRowCount();
 		 System.out.println("Row Count :"+rowCount);
@@ -32,6 +32,7 @@ public class HTMLUnit {
 		 for (final HtmlTableRow row : table.getRows()) {
 		     System.out.println("Scrapping Table Rows");
 		     String transactionId=row.getCells().get(1).asText();
+		     transactionId=transactionId.substring(0, 16);//1st 16 char. remove 3 dots
 		     String result=row.getCells().get(5).asText();
 		     String betAmount=row.getCells().get(6).asText().split("\\s+")[0];
 		     String payoutAmount=row.getCells().get(7).asText().split("\\s+")[0];
@@ -54,7 +55,13 @@ public class HTMLUnit {
 			 System.out.println("Table Data:"+tableData.toString());
 			 tableData.setRoundNum(roundNum);
 			 Connection c=getConnection();
-			 insertTableData(tableData, c);
+			 try {
+				insertTableData(tableData, c);
+			} catch (Exception e) {
+				//if transaction Id already exist in sqlite. exception is thrown
+				System.out.println("InsertData exeception :" +e.getMessage());
+				e.printStackTrace();
+			}
 			 c.close();
 		 }
 		 return  tableMap.get(transactionIdToSearch);

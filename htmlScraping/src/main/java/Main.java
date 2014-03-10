@@ -55,18 +55,35 @@ public class Main {
 		 */
 
 		/** BEGIN GAME */
-		for (int i = 0; i < 9; i++) {
+		String password1="";
+		String password2="";
+		String toAddress="";
+		String fromAddress="";
+		
+		System.out.println("Game starts :");
+		
+		//before starting game please ensure that you have Table created and database path is set in HTMLUnit.java
+		
+		//bet 10 Rounds
+		for (int i = 0; i < 10; i++) {
+			
+			
+			//BlockChain.refreshWalletInfo();
+			//System.out.print(BlockChain.toString());
+			
 			//1. bet by transfering bitcoin from blockchain to bitzillions
-			
-			BlockChain.refreshWalletInfo();
-			System.out.print(BlockChain.toString());
 			//2. Extract last transaction id may be...sendFrom will return transaction id
-			String transactionId="0a8d95dbea80cf65...";
+			//String transactionId="0a8d95dbea80cf65...";
+			round=i+1;
+			System.out.println("Round :"+round);
+			String transactionId=BlockChain.sendBitCoin(password1, password2, toAddress, bets.get(round), fromAddress);
 			
-			Thread.sleep(8000);//3. wait for some time for transaction to appear on bitzillions
+			//3. wait for some time for transaction to appear on bitzillions. Hey Jacob please configure seconds. 
+			//I am not sure how much seconds I need to wait.
+			Thread.sleep(8000);
 			
 			//4. store data related to transaction id
-			TableData tableData=bitZill.storeData(urlToRead, transactionId, i);
+			TableData tableData=HTMLUnit.storeData(urlToRead, transactionId, round);
 			if(tableData != null)
 			{
 				if(tableData.getResult().equals("win"))
@@ -75,6 +92,7 @@ public class Main {
 				}
 			}
 		}
+		System.out.println("Game Ends :");
 		/** GAME ENDS */
 
 		/** TRADE BEGIN */
