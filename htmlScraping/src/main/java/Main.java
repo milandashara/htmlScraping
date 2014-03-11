@@ -1,4 +1,5 @@
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 import sql.TableData;
@@ -57,7 +58,7 @@ public class Main {
 		/** BEGIN GAME */
 		String password1="";
 		String password2="";
-		String toAddress="";
+		String bitzillions="";
 		String fromAddress="";
 		
 		System.out.println("Game starts :");
@@ -68,7 +69,7 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			
 			
-			//BlockChain.refreshWalletInfo();
+			BlockChain.refreshWalletInfo();
 			//System.out.print(BlockChain.toString());
 			
 			//1. bet by transfering bitcoin from blockchain to bitzillions
@@ -76,7 +77,8 @@ public class Main {
 			//String transactionId="0a8d95dbea80cf65...";
 			round=i+1;
 			System.out.println("Round :"+round);
-			String transactionId=BlockChain.sendBitCoin(password1, password2, toAddress, bets.get(round), fromAddress);
+			Timestamp timeStamp=new Timestamp(System.currentTimeMillis());
+			String transactionId=BlockChain.sendBitCoin(password1, password2, bitzillions, bets.get(round), fromAddress,timeStamp.toString());
 			
 			//3. wait for some time for transaction to appear on bitzillions. Hey Jacob please configure seconds. 
 			//I am not sure how much seconds I need to wait.

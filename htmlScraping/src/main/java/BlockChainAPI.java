@@ -3,7 +3,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -17,7 +16,7 @@ public class BlockChainAPI {
 
 	private String walletInfoUrl;
 	private JSONObject walletInfo;
-	private String walletSendURL="https://blockchain.info/merchant/$guid/payment?password=:1&second_password=:2&to=:3&amount=:4&from=:5&shared=false";
+	private String walletSendURL="https://blockchain.info/merchant/GUID_HERE/payment?password=:1&second_password=:2&to=:3&amount=:4&from=:5&shared=false¬e=:6";
 	public JSONObject getWalletInfo() {
 		return walletInfo;
 	}
@@ -26,7 +25,7 @@ public class BlockChainAPI {
 		walletInfoUrl = "http://blockchain.info/address/" + myAddress + "?format=json&limit=1";
 	}
 	
-	public String sendBitCoin(String password1,String password2,String toAddress,double amount,String fromAddress)
+	public String sendBitCoin(String password1,String password2,String toAddress,double amount,String fromAddress,String note)
 	{
 		walletSendURL.replaceAll(":1", password1);
 		walletSendURL.replaceAll(":2", password2);
