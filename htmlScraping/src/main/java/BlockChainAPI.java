@@ -38,7 +38,7 @@ public class BlockChainAPI {
 		JSONObject sendBitCoinInfo;
 		String transactionId="";
 		try {		
-			sendBitCoinInfo = new JSONObject(readUrl(walletInfoUrl));
+			sendBitCoinInfo = new JSONObject(readUrl(walletSendURL));
 			transactionId=sendBitCoinInfo.get("tx_hash").toString();
 		} catch (MalformedURLException e) {
 			System.out.println(e.toString());
