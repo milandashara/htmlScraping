@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,9 +13,13 @@ import org.json.JSONObject;
 
 public class BlockChainAPI {
 
+	/*
 	private String walletInfoUrl;
 	private JSONObject walletInfo;
-	private String walletSendURL="https://blockchain.info/merchant/GUID_HERE/payment?password=:1&second_password=:2&to=:3&amount=:4&from=:5&shared=false¬e=:6";
+	*/
+	private String walletSendURL="https://blockchain.info/merchant/$guid/payment?password=:1&second_password=:2&to=:3&amount=:4&from=:5&shared=false";
+	
+	/*
 	public JSONObject getWalletInfo() {
 		return walletInfo;
 	}
@@ -24,8 +27,9 @@ public class BlockChainAPI {
 	public BlockChainAPI(String myAddress) {	
 		walletInfoUrl = "http://blockchain.info/address/" + myAddress + "?format=json&limit=1";
 	}
+	*/
 	
-	public String sendBitCoin(String password1,String password2,String toAddress,double amount,String fromAddress,String note)
+	public String sendBitCoin(String password1,String password2,String toAddress,double amount,String fromAddress)
 	{
 		walletSendURL.replaceAll(":1", password1);
 		walletSendURL.replaceAll(":2", password2);
@@ -33,7 +37,7 @@ public class BlockChainAPI {
 		walletSendURL.replaceAll(":4", String.valueOf(amount));
 		walletSendURL.replaceAll(":5", fromAddress);
 		
-		System.out.println("sendBitCoin url : "+walletSendURL);
+		System.out.println("sendBitCoin url : " + walletSendURL);
 		JSONObject sendBitCoinInfo;
 		String transactionId="";
 		try {		
@@ -49,27 +53,10 @@ public class BlockChainAPI {
 			e.printStackTrace();
 		}	
 		System.out.println("Transaction Id : "+ transactionId);
-		transactionId=transactionId.substring(0, 16);//1s 16 character
+		transactionId = transactionId.substring(0, 16);//1s 16 character
 		System.out.println("16 digit Transaction Id : "+transactionId);
 		
 		return transactionId;
-	}
-	
-	public void refreshWalletInfo() {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		System.out.println(sdf.format(Calendar.getInstance().getTime()) + ": Wallet Info URL: " + walletInfoUrl);
-		try {		
-			walletInfo = new JSONObject(readUrl(walletInfoUrl));
-		} catch (MalformedURLException e) {
-			System.out.println(e.toString());
-		} catch (IOException e) {
-			System.out.println(e.toString());
-		} catch (JSONException e) {
-			System.out.println();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
 	}
 	
 	private static String readUrl(String urlString) throws Exception {
@@ -89,7 +76,28 @@ public class BlockChainAPI {
 	            reader.close();
 	    }
 	}
+
 	
+	/*
+	public void refreshWalletInfo() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		System.out.println(sdf.format(Calendar.getInstance().getTime()) + ": Wallet Info URL: " + walletInfoUrl);
+		try {		
+			walletInfo = new JSONObject(readUrl(walletInfoUrl));
+		} catch (MalformedURLException e) {
+			System.out.println(e.toString());
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		} catch (JSONException e) {
+			System.out.println();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+	*/
+	
+	/*
 	public String toString() {
 		for(Object key: walletInfo.keySet()) {
 			if (walletInfo.get(key.toString()) instanceof JSONArray){
@@ -102,5 +110,6 @@ public class BlockChainAPI {
 		}
 		return null;
 	}
-	
+	*/
+
 }

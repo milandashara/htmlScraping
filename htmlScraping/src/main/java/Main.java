@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 
-		int round = 0;
+		int roundNum = 0;
 		/*
 		 * HashMap<Integer, Double> bets = new HashMap<Integer, Double>();
 		 * bets.put(1, 0.004); bets.put(2, 0.008145); bets.put(3, 0.016586);
@@ -28,81 +28,65 @@ public class Main {
 		bets.put(9, 0.001);
 		bets.put(10, 0.001);
 
-		String myWallet = "1Htt5pMEX6PjAM9ZhmuxAGoixk48xt5iL9";
-		String bones50Wallet = "1bonesF1NYidcd5veLqy1RZgF4mpYJWXZ";
-		// String urlToRead = "http://www.google.co.in/";
-		// String urlToRead =
-		// "http://htmlunit.sourceforge.net/javascript-howto.html";
-		String urlToRead = "http://bitzillions.com/satoshibones";
+		/** INITIALIZE BEGIN */
+		String myWallet 		= "1Htt5pMEX6PjAM9ZhmuxAGoixk48xt5iL9";
+		String bones50Wallet 	= "1bonesF1NYidcd5veLqy1RZgF4mpYJWXZ";
+		String urlToRead 		= "http://bitzillions.com/satoshibones";
 
-		/**
-		 * INITIALIZE BEGIN Perform the following tasks prior to new processing
-		 * IO
-		 */
-		BlockChainAPI BlockChain = new BlockChainAPI(myWallet);
-		HTMLUnit bitZill = new HTMLUnit();
-		/** INITIALIZE END */
-
-		/*
-		 * execute round 1 bet (noted in bets hashmap) send amount to
-		 * bones50Wallet from blockchain wallet using blockChainAPI (create
-		 * dummy wallet for this and send small amounts) pull transaction id
-		 * from blockchain for round one bet using blockChainAPI check bones
-		 * site for win or lose based on transaction id when checking bones site
-		 * store only the transaction id associated with the bet from blockchain
-		 * store a time stamp in SQLite store the round number in SQLite if
-		 * bones says lose and round < 10 then increase round +1 and bet the
-		 * next round amount if bones says win then stop
-		 */
-
-		/** BEGIN GAME */
 		String password1="";
 		String password2="";
-		String bitzillions="";
-		String fromAddress="";
-		
-		System.out.println("Game starts :");
-		
-		//before starting game please ensure that you have Table created and database path is set in HTMLUnit.java
-		
+		String bitZillionAddress=myWallet;
+		String fromAddress=bones50Wallet;
+
+		BlockChainAPI BlockChain = new BlockChainAPI();
+		/** INITIALIZE END */
+
+		/** BEGIN GAME */
+		Timestamp timeStamp=new Timestamp(System.currentTimeMillis());
+		System.out.println("Game starts: " + timeStamp);
+				
 		//bet 10 Rounds
 		for (int i = 0; i < 10; i++) {
+
+			roundNum = i+1;
+			System.out.println("Round: " + roundNum);
+
+			//1. Bet by transferring bitcoin from myWallet to bitZillions and storing transactionId in the database with a timestamp.
+			String transactionId = BlockChain.sendBitCoin(password1, password2, bitZillionAddress, bets.get(roundNum), fromAddress);
+			
+			//2. Store the transactionId and round in the database
+			HTMLUnit.storeTransactionId(transactionId, roundNum, timeStamp);
 			
 			
-			BlockChain.refreshWalletInfo();
-			//System.out.print(BlockChain.toString());
+			//3. Check for the transactionId on bitZillions.
+			//Begin Loop: Make this a loop that loops every 5 seconds for up to 1 minute.
+			TableData tableData = new TableData();
 			
-			//1. bet by transfering bitcoin from blockchain to bitzillions
-			//2. Extract last transaction id may be...sendFrom will return transaction id
-			//String transactionId="0a8d95dbea80cf65...";
-			round=i+1;
-			System.out.println("Round :"+round);
-			Timestamp timeStamp=new Timestamp(System.currentTimeMillis());
-			String transactionId=BlockChain.sendBitCoin(password1, password2, bitzillions, bets.get(round), fromAddress,timeStamp.toString());
-			
-			//3. wait for some time for transaction to appear on bitzillions. Hey Jacob please configure seconds. 
-			//I am not sure how much seconds I need to wait.
-			Thread.sleep(8000);
-			
-			//4. store data related to transaction id
-			TableData tableData=HTMLUnit.storeData(urlToRead, transactionId, round);
-			if(tableData != null)
-			{
-				if(tableData.getResult().equals("win"))
-				{
+			long endTime = System.currentTimeMillis()+60000;
+			while(System.currentTimeMillis() < endTime) {
+				tableData = HTMLUnit.searchBitZillion(urlToRead, transactionId.substring(0, 16), roundNum);
+				if(tableData != null) {
+					tableData.setTransactionId(transactionId);
 					break;
 				}
+				Thread.sleep(5000);
+			}
+			
+			//3. Store dat0a related to transactionId
+			HTMLUnit.storeBitZillionResults(tableData);
+
+			//4. Check if game has ended.
+			if(tableData.getResult().equals("win")) {
+				break;
 			}
 		}
-		System.out.println("Game Ends :");
+		
+		/** BEGIN GAME */
+		Timestamp endtimeStamp=new Timestamp(System.currentTimeMillis());
+		
+		System.out.println("Game Ends: " + endtimeStamp);
 		/** GAME ENDS */
 
-		/** TRADE BEGIN */
-		// cryptsy.getOrderBook().setOrderBook(TableService.populatePathOrders(cryptsy));
-		// cryptsy.getOrderBook().setOrderBook(TableService.populateSpreadOrders(cryptsy));
-		// System.out.println("");//cryptsy.getOrderBook().getOrderBook());
-		// System.out.println(cryptsy.getOrderBook().toString());
-		/** TRADE END */
 	}
 
 }
