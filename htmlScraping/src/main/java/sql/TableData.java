@@ -10,6 +10,15 @@ public class TableData {
 	double betAmount;
 	double payoutAmount;
 	int roundNum;
+	double transactionFee;
+
+	public double getTransactionFee() {
+		return transactionFee;
+	}
+
+	public void setTransactionFee(double transactionFee) {
+		this.transactionFee = transactionFee;
+	}
 
 	public int getRoundNum() {
 		return roundNum;
